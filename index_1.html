@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MACRIS — Teste Equipes</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f7f4;color:#1a1a18;}
+.nav{background:#1a1a18;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.nav-logo{color:#fff;font-size:15px;font-weight:700;}
+.nav-logo span{color:#f0c040;}
+.nav-tabs{display:flex;gap:3px;}
+.nav-tab{background:none;border:none;color:#888;font-size:13px;padding:7px 13px;border-radius:6px;cursor:pointer;}
+.nav-tab.active{background:rgba(255,255,255,0.12);color:#fff;}
+.page{display:none;padding:24px 18px;max-width:780px;margin:0 auto;}
+.page.active{display:block;}
+.card{background:#fff;border-radius:14px;border:1px solid #e8e5de;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);}
+.fhero{background:#1a1a18;padding:26px 24px 20px;}
+.fhero h1{color:#fff;font-size:20px;font-weight:700;margin-bottom:5px;}
+.fhero p{color:#aaa;font-size:13px;line-height:1.5;}
+.prog{background:#2e2e2c;height:3px;margin-top:16px;border-radius:2px;}
+.progbar{height:100%;background:#f0c040;border-radius:2px;transition:width 0.4s;}
+.step{padding:24px;display:none;}
+.step.active{display:block;}
+.slbl{font-size:10px;font-weight:700;color:#f0c040;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.stitle{font-size:18px;font-weight:700;margin-bottom:3px;}
+.sdesc{font-size:13px;color:#888;margin-bottom:20px;line-height:1.5;}
+.field{margin-bottom:15px;}
+.field label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px;}
+.field input,.field select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:13px;background:#fafaf8;outline:none;-webkit-appearance:none;color:#1a1a18;}
+.field input:focus,.field select:focus{border-color:#1a1a18;}
+.qblock{margin-bottom:20px;}
+.qblock .q{font-size:13px;font-weight:600;margin-bottom:9px;line-height:1.5;}
+.opts{display:flex;flex-direction:column;gap:7px;}
+.opt{display:flex;align-items:center;gap:9px;padding:10px 13px;border:1px solid #e5e2db;border-radius:8px;cursor:pointer;font-size:13px;color:#555;line-height:1.4;user-select:none;}
+.opt:hover{border-color:#bbb;background:#f8f7f4;}
+.opt.selected{border-color:#1a1a18;background:#1a1a18;color:#fff;}
+.opt input{display:none;}
+.dot{width:14px;height:14px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;}
+.opt.selected .dot{background:#f0c040;border-color:#f0c040;}
+.ftr{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-top:1px solid #f0ede6;background:#faf9f7;}
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;}
+.btn-p{background:#1a1a18;color:#fff;}
+.btn-p:hover{background:#333;}
+.btn-p:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-s{background:none;border:1px solid #ddd;color:#666;}
+.scnt{font-size:11px;color:#aaa;}
+.suc{display:none;text-align:center;padding:44px 24px;}
+.suc.show{display:block;}
+.suc .ico{font-size:50px;margin-bottom:14px;}
+.suc h2{font-size:20px;font-weight:700;margin-bottom:7px;}
+.suc p{font-size:13px;color:#777;line-height:1.5;}
+
+/* PAINEL */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+.ph h2{font-size:18px;font-weight:700;}
+.ph-r{display:flex;gap:8px;align-items:center;}
+.pcnt{font-size:12px;color:#999;background:#fff;padding:4px 12px;border-radius:20px;border:1px solid #e8e5de;}
+.rbtn{background:#1a1a18;color:#fff;border:none;padding:7px 13px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;}
+.rbtn:hover{background:#333;}
+.ccard{background:#fff;border-radius:12px;border:1px solid #e8e5de;overflow:hidden;margin-bottom:10px;}
+.cchead{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;}
+.cchead:hover{background:#faf9f7;}
+.av{width:40px;height:40px;border-radius:50%;background:#1a1a18;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#f0c040;flex-shrink:0;}
+.ci{flex:1;min-width:0;}
+.cn{font-size:14px;font-weight:700;}
+.cr{font-size:11px;color:#aaa;margin-top:1px;}
+.bgs{display:flex;gap:5px;flex-wrap:wrap;}
+.bg{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;}
+.bg-p{background:#EEEDFE;color:#3C3489;}
+.bg-t{background:#D6F5EC;color:#0A6B4F;}
+.bg-a{background:#FEF3DA;color:#7A4A08;}
+.bg-b{background:#E0EFFE;color:#154E94;}
+.chv{font-size:10px;color:#ccc;transition:transform 0.2s;flex-shrink:0;}
+.chv.open{transform:rotate(180deg);}
+.cdet{display:none;padding:4px 18px 18px;border-top:1px solid #f5f2ec;}
+.cdet.open{display:block;}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.dbox{background:#f8f7f4;border-radius:8px;padding:11px 13px;}
+.dlbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#ccc;margin-bottom:3px;}
+.dval{font-size:13px;font-weight:700;}
+.dsub{font-size:10px;color:#999;margin-top:2px;line-height:1.4;}
+.dacts{display:flex;gap:7px;margin-top:12px;}
+.abtn{flex:1;padding:9px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;}
+.abtn-p{background:#1a1a18;color:#fff;}
+.abtn-d{background:#fff0f0;color:#c0392b;border:1px solid #fad4d4;}
+.empty{text-align:center;padding:50px 20px;color:#ccc;background:#fff;border-radius:12px;border:1px solid #e8e5de;}
+.empty .ico{font-size:40px;margin-bottom:12px;}
+.empty p{font-size:13px;line-height:1.6;}
+.spin-wrap{text-align:center;padding:40px 20px;background:#fff;border-radius:12px;border:1px solid #e8e5de;}
+.spin{width:28px;height:28px;border:3px solid #eee;border-top-color:#1a1a18;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* PERFIL */
+.pw{max-width:640px;margin:0 auto;}
+.pcard{background:#fff;border-radius:14px;border:1px solid #e8e5de;overflow:hidden;}
+.phero{background:#1a1a18;padding:28px 24px;text-align:center;}
+.pav{width:62px;height:62px;border-radius:50%;background:#f0c040;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;color:#1a1a18;margin:0 auto 12px;}
+.phero h2{color:#fff;font-size:20px;font-weight:700;}
+.phero .sub{color:#aaa;font-size:12px;margin-top:3px;}
+.phero .dt{color:#666;font-size:11px;margin-top:6px;}
+.pbgs{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:12px;}
+.pbgs .bg{font-size:11px;padding:3px 10px;}
+.psec{padding:20px 24px;border-bottom:1px solid #f5f2ec;}
+.stag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#f0c040;background:#1a1a18;padding:3px 10px;border-radius:20px;margin-bottom:14px;}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pbox{background:#f8f7f4;border-radius:9px;padding:13px;}
+.pbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#ccc;margin-bottom:4px;}
+.pbv{font-size:14px;font-weight:700;}
+.pbd{font-size:11px;color:#888;margin-top:3px;line-height:1.4;}
+.pfooter{padding:18px 24px;background:#faf9f7;display:flex;gap:9px;}
+.pfooter button{flex:1;padding:11px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;}
+.pbk{background:#f0ede6;color:#333;}
+.ppr{background:#1a1a18;color:#fff;}
+.sel-prompt{text-align:center;padding:50px 20px;color:#ccc;background:#fff;border-radius:12px;border:1px solid #e8e5de;font-size:13px;line-height:1.6;}
+.sel-prompt .ico{font-size:36px;margin-bottom:12px;display:block;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a18;color:#fff;padding:10px 18px;border-radius:9px;font-size:12px;font-weight:500;opacity:0;transition:opacity 0.3s;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;}
+
+/* MODAL PAINEL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:#fff;border-radius:14px;padding:24px;max-width:360px;width:90%;text-align:center;}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:8px;}
+.modal p{font-size:13px;color:#666;line-height:1.5;margin-bottom:16px;}
+.modal input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:13px;outline:none;margin-bottom:12px;}
+.modal input:focus{border-color:#1a1a18;}
+.modal .btn-p{width:100%;padding:11px;}
+
+@media print{
+  .nav,#page-form,#page-painel,.pfooter{display:none!important;}
+  #page-perfil{display:block!important;padding:0;}
+  body{background:#fff;}
+  .pcard{box-shadow:none;border:none;}
+}
+@media(max-width:460px){
+  .dgrid,.pgrid{grid-template-columns:1fr;}
+  .bgs{display:none;}
+  .nav-tab{font-size:11px;padding:6px 9px;}
+}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-logo">MACRIS <span>▸</span> Teste Equipes</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('form')">Fazer teste</button>
+    <button class="nav-tab" onclick="showPage('painel')">Painel</button>
+    <button class="nav-tab" onclick="showPage('perfil')">Perfil</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL SENHA PAINEL -->
+<div class="modal-overlay" id="modalSenha">
+  <div class="modal">
+    <h3>🔒 Área restrita</h3>
+    <p>Esta área é exclusiva para a gestão Macris. Digite a senha para acessar.</p>
+    <input type="password" id="senhaInput" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter')checkSenha()"/>
+    <button class="btn btn-p" onclick="checkSenha()">Entrar</button>
+    <p id="senhaErro" style="color:#e74c3c;font-size:12px;margin-top:8px;display:none;">Senha incorreta. Tente novamente.</p>
+  </div>
+</div>
+
+<!-- FORMULÁRIO -->
+<div class="page active" id="page-form">
+<div class="card">
+  <div class="fhero">
+    <h1>Mapeamento de perfil</h1>
+    <p>Responda com sinceridade — não há certo ou errado.<br>Leva cerca de 15 minutos para completar.</p>
+    <div class="prog"><div class="progbar" id="pb" style="width:0%"></div></div>
+  </div>
+
+  <div class="step active" id="s0">
+    <div class="slbl">Início</div><div class="stitle">Seus dados</div>
+    <div class="sdesc">Preencha as informações abaixo para começar.</div>
+    <div class="field"><label>Nome completo *</label><input type="text" id="fn" placeholder="Seu nome completo"/></div>
+    <div class="field"><label>Cargo *</label>
+      <select id="fc">
+        <option value="">Selecione seu cargo...</option>
+        <option>Gerente</option><option>Vendedor</option><option>Caixa</option>
+        <option>Estoquista</option><option>Supervisor</option><option>Outro</option>
+      </select>
+    </div>
+    <div class="field"><label>De qual loja você é? *</label>
+      <select id="fl">
+        <option value="">Selecione sua loja...</option>
+        <option>PVH Loja</option>
+        <option>PVH QSQ</option>
+        <option>PVH Ótica</option>
+        <option>Via Verde Loja</option>
+        <option>Ótica Rio Branco</option>
+        <option>Ariquemes QSQ</option>
+        <option>Ji-Paraná LJR</option>
+        <option>Ji-Paraná QSQ</option>
+        <option>Cacoal Loja</option>
+        <option>Vilhena QSQ</option>
+        <option>Loja Reserva</option>
+        <option>Loja Kings</option>
+        <option>Escritório Macris</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="step" id="s1">
+    <div class="slbl">Teste 1 de 4 · Perfil Comportamental</div><div class="stitle">Teste dos Bichos</div>
+    <div class="sdesc">Para cada situação, escolha a opção que mais combina com você no trabalho.</div>
+    <div class="qblock"><div class="q">1. Quando surge um problema na loja, você:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'b1','A')"><input type="radio"/><span class="dot"></span>Age imediatamente para resolver, sem esperar</label>
+      <label class="opt" onclick="sel(this,'b1','B')"><input type="radio"/><span class="dot"></span>Conversa com a equipe para encontrar a melhor solução juntos</label>
+      <label class="opt" onclick="sel(this,'b1','C')"><input type="radio"/><span class="dot"></span>Pensa em novas formas criativas de resolver</label>
+      <label class="opt" onclick="sel(this,'b1','D')"><input type="radio"/><span class="dot"></span>Analisa detalhadamente antes de tomar qualquer decisão</label>
+    </div></div>
+    <div class="qblock"><div class="q">2. Seu maior ponto forte no trabalho é:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'b2','A')"><input type="radio"/><span class="dot"></span>Bater metas e entregar resultados rapidamente</label>
+      <label class="opt" onclick="sel(this,'b2','B')"><input type="radio"/><span class="dot"></span>Se dar bem com todos e criar harmonia na equipe</label>
+      <label class="opt" onclick="sel(this,'b2','C')"><input type="radio"/><span class="dot"></span>Ter ideias inovadoras e enxergar oportunidades</label>
+      <label class="opt" onclick="sel(this,'b2','D')"><input type="radio"/><span class="dot"></span>Fazer tudo com organização, detalhes e no prazo</label>
+    </div></div>
+    <div class="qblock"><div class="q">3. Como você prefere trabalhar?</div><div class="opts">
+      <label class="opt" onclick="sel(this,'b3','A')"><input type="radio"/><span class="dot"></span>Com autonomia e liberdade para decidir</label>
+      <label class="opt" onclick="sel(this,'b3','B')"><input type="radio"/><span class="dot"></span>Em equipe, colaborando e ajudando outras pessoas</label>
+      <label class="opt" onclick="sel(this,'b3','C')"><input type="radio"/><span class="dot"></span>Com liberdade para criar e experimentar coisas novas</label>
+      <label class="opt" onclick="sel(this,'b3','D')"><input type="radio"/><span class="dot"></span>Seguindo processos claros e bem estruturados</label>
+    </div></div>
+    <div class="qblock"><div class="q">4. Diante de uma tarefa importante, você:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'b4','A')"><input type="radio"/><span class="dot"></span>Vai direto ao ponto e resolve logo</label>
+      <label class="opt" onclick="sel(this,'b4','B')"><input type="radio"/><span class="dot"></span>Envolve outras pessoas para fazer em conjunto</label>
+      <label class="opt" onclick="sel(this,'b4','C')"><input type="radio"/><span class="dot"></span>Pensa em maneiras diferentes e criativas de fazer</label>
+      <label class="opt" onclick="sel(this,'b4','D')"><input type="radio"/><span class="dot"></span>Planeja com cuidado antes de começar a executar</label>
+    </div></div>
+  </div>
+
+  <div class="step" id="s2">
+    <div class="slbl">Teste 2 de 4 · Comportamento Profissional</div><div class="stitle">Teste DISC</div>
+    <div class="sdesc">Escolha a alternativa que melhor descreve como você age no trabalho.</div>
+    <div class="qblock"><div class="q">5. Em uma reunião ou conversa de trabalho, você costuma:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'d1','D')"><input type="radio"/><span class="dot"></span>Assumir o comando e dar os direcionamentos</label>
+      <label class="opt" onclick="sel(this,'d1','I')"><input type="radio"/><span class="dot"></span>Animar o grupo e deixar o clima leve</label>
+      <label class="opt" onclick="sel(this,'d1','S')"><input type="radio"/><span class="dot"></span>Ouvir todos antes de dar sua opinião</label>
+      <label class="opt" onclick="sel(this,'d1','C')"><input type="radio"/><span class="dot"></span>Apresentar dados e argumentos precisos</label>
+    </div></div>
+    <div class="qblock"><div class="q">6. Quando recebe uma crítica, você:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'d2','D')"><input type="radio"/><span class="dot"></span>Rebate se discordar e defende seu ponto</label>
+      <label class="opt" onclick="sel(this,'d2','I')"><input type="radio"/><span class="dot"></span>Leva para o lado pessoal, mas logo supera</label>
+      <label class="opt" onclick="sel(this,'d2','S')"><input type="radio"/><span class="dot"></span>Aceita tranquilo e procura melhorar</label>
+      <label class="opt" onclick="sel(this,'d2','C')"><input type="radio"/><span class="dot"></span>Analisa se faz sentido antes de agir</label>
+    </div></div>
+    <div class="qblock"><div class="q">7. Seu maior desafio profissional é:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'d3','D')"><input type="radio"/><span class="dot"></span>Ter paciência e ouvir mais as pessoas</label>
+      <label class="opt" onclick="sel(this,'d3','I')"><input type="radio"/><span class="dot"></span>Manter foco e cumprir prazos</label>
+      <label class="opt" onclick="sel(this,'d3','S')"><input type="radio"/><span class="dot"></span>Tomar decisões rápidas e se impor</label>
+      <label class="opt" onclick="sel(this,'d3','C')"><input type="radio"/><span class="dot"></span>Agir sem ter todas as informações</label>
+    </div></div>
+    <div class="qblock"><div class="q">8. O que mais te motiva no trabalho?</div><div class="opts">
+      <label class="opt" onclick="sel(this,'d4','D')"><input type="radio"/><span class="dot"></span>Desafios e superar metas cada vez maiores</label>
+      <label class="opt" onclick="sel(this,'d4','I')"><input type="radio"/><span class="dot"></span>Reconhecimento e trabalhar em equipe</label>
+      <label class="opt" onclick="sel(this,'d4','S')"><input type="radio"/><span class="dot"></span>Estabilidade e ambiente harmonioso</label>
+      <label class="opt" onclick="sel(this,'d4','C')"><input type="radio"/><span class="dot"></span>Fazer um trabalho de altíssima qualidade</label>
+    </div></div>
+  </div>
+
+  <div class="step" id="s3">
+    <div class="slbl">Teste 3 de 4 · Reações Naturais</div><div class="stitle">Temperamento</div>
+    <div class="sdesc">Pense em como você reage naturalmente às situações do dia a dia.</div>
+    <div class="qblock"><div class="q">9. Em situações de pressão no trabalho, você tende a:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'t1','COL')"><input type="radio"/><span class="dot"></span>Ficar irritado e querer resolver tudo muito rápido</label>
+      <label class="opt" onclick="sel(this,'t1','SAN')"><input type="radio"/><span class="dot"></span>Tentar animar o ambiente e ver o lado positivo</label>
+      <label class="opt" onclick="sel(this,'t1','MEL')"><input type="radio"/><span class="dot"></span>Sentir bastante, preocupar muito e pensar demais</label>
+      <label class="opt" onclick="sel(this,'t1','FLE')"><input type="radio"/><span class="dot"></span>Manter a calma e esperar a situação se resolver</label>
+    </div></div>
+    <div class="qblock"><div class="q">10. Nas relações com a equipe, você é:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'t2','COL')"><input type="radio"/><span class="dot"></span>Direto e objetivo, às vezes um pouco brusco</label>
+      <label class="opt" onclick="sel(this,'t2','SAN')"><input type="radio"/><span class="dot"></span>Comunicativo e faz amizade fácil com todos</label>
+      <label class="opt" onclick="sel(this,'t2','MEL')"><input type="radio"/><span class="dot"></span>Reservado, prefere poucos amigos próximos</label>
+      <label class="opt" onclick="sel(this,'t2','FLE')"><input type="radio"/><span class="dot"></span>Tranquilo e se dá bem com todo tipo de pessoa</label>
+    </div></div>
+    <div class="qblock"><div class="q">11. Quando comete um erro no trabalho, você:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'t3','COL')"><input type="radio"/><span class="dot"></span>Reconhece rapidamente e age para corrigir logo</label>
+      <label class="opt" onclick="sel(this,'t3','SAN')"><input type="radio"/><span class="dot"></span>Tenta não ligar muito e segue em frente animado</label>
+      <label class="opt" onclick="sel(this,'t3','MEL')"><input type="radio"/><span class="dot"></span>Se cobra muito e fica pensando naquilo por um tempo</label>
+      <label class="opt" onclick="sel(this,'t3','FLE')"><input type="radio"/><span class="dot"></span>Aceita tranquilamente e aprende com a situação</label>
+    </div></div>
+    <div class="qblock"><div class="q">12. O ambiente de trabalho ideal para você é:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'t4','COL')"><input type="radio"/><span class="dot"></span>Dinâmico, com desafios e metas constantes</label>
+      <label class="opt" onclick="sel(this,'t4','SAN')"><input type="radio"/><span class="dot"></span>Animado, com muita interação e movimento</label>
+      <label class="opt" onclick="sel(this,'t4','MEL')"><input type="radio"/><span class="dot"></span>Tranquilo, organizado e com rotina bem definida</label>
+      <label class="opt" onclick="sel(this,'t4','FLE')"><input type="radio"/><span class="dot"></span>Estável, sem muitas pressões ou conflitos</label>
+    </div></div>
+  </div>
+
+  <div class="step" id="s4">
+    <div class="slbl">Teste 4 de 4 · Estilo de Aprendizado</div><div class="stitle">Como você aprende melhor</div>
+    <div class="sdesc">Pense em situações de treinamento ou quando precisou aprender algo novo no trabalho.</div>
+    <div class="qblock"><div class="q">13. Quando precisa aprender algo novo, você prefere:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'a1','V')"><input type="radio"/><span class="dot"></span>Ver demonstrações, vídeos ou imagens explicativas</label>
+      <label class="opt" onclick="sel(this,'a1','A')"><input type="radio"/><span class="dot"></span>Ouvir uma explicação ao vivo ou conversar sobre o assunto</label>
+      <label class="opt" onclick="sel(this,'a1','L')"><input type="radio"/><span class="dot"></span>Ler um manual, texto ou passo a passo detalhado</label>
+      <label class="opt" onclick="sel(this,'a1','C')"><input type="radio"/><span class="dot"></span>Colocar a mão na massa e praticar diretamente</label>
+    </div></div>
+    <div class="qblock"><div class="q">14. Para guardar uma informação importante, você precisa:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'a2','V')"><input type="radio"/><span class="dot"></span>Visualizar mentalmente onde viu aquilo</label>
+      <label class="opt" onclick="sel(this,'a2','A')"><input type="radio"/><span class="dot"></span>Lembrar da voz ou explicação de quem te ensinou</label>
+      <label class="opt" onclick="sel(this,'a2','L')"><input type="radio"/><span class="dot"></span>Ter anotado ou lido aquilo em algum lugar</label>
+      <label class="opt" onclick="sel(this,'a2','C')"><input type="radio"/><span class="dot"></span>Ter praticado ou vivenciado aquela situação</label>
+    </div></div>
+    <div class="qblock"><div class="q">15. O treinamento que mais funciona para você é:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'a3','V')"><input type="radio"/><span class="dot"></span>Apresentações com slides, fotos e exemplos visuais</label>
+      <label class="opt" onclick="sel(this,'a3','A')"><input type="radio"/><span class="dot"></span>Aulas ao vivo com explicação e muito diálogo</label>
+      <label class="opt" onclick="sel(this,'a3','L')"><input type="radio"/><span class="dot"></span>Material escrito para ler e estudar no seu ritmo</label>
+      <label class="opt" onclick="sel(this,'a3','C')"><input type="radio"/><span class="dot"></span>Simulações e práticas no próprio ambiente de trabalho</label>
+    </div></div>
+    <div class="qblock"><div class="q">16. Você se distrai em treinamentos quando:</div><div class="opts">
+      <label class="opt" onclick="sel(this,'a4','V')"><input type="radio"/><span class="dot"></span>Não tem nada visual para prender a atenção</label>
+      <label class="opt" onclick="sel(this,'a4','A')"><input type="radio"/><span class="dot"></span>O ambiente está barulhento ou a explicação é monótona</label>
+      <label class="opt" onclick="sel(this,'a4','L')"><input type="radio"/><span class="dot"></span>Não tem nada escrito para acompanhar</label>
+      <label class="opt" onclick="sel(this,'a4','C')"><input type="radio"/><span class="dot"></span>Fica muito tempo ouvindo sem colocar em prática</label>
+    </div></div>
+  </div>
+
+  <div class="suc" id="suc">
+    <div class="ico">✅</div>
+    <h2 id="suc-t">Perfil registrado!</h2>
+    <p id="suc-m">Seu perfil foi salvo com sucesso. A gestão já pode visualizar no Painel.</p>
+    <button class="btn btn-p" style="margin-top:20px" onclick="resetForm()">Novo cadastro</button>
+  </div>
+
+  <div class="ftr" id="ftr">
+    <button class="btn btn-s" id="bbk" onclick="prev()" style="display:none">← Voltar</button>
+    <span class="scnt" id="scnt">Etapa 1 de 5</span>
+    <button class="btn btn-p" id="bnx" onclick="next()">Continuar →</button>
+  </div>
+</div>
+</div>
+
+<!-- PAINEL -->
+<div class="page" id="page-painel">
+  <div class="ph">
+    <h2>Painel de perfis</h2>
+    <div class="ph-r">
+      <span class="pcnt" id="pcnt">—</span>
+      <button class="rbtn" onclick="loadPainel()">↻ Atualizar</button>
+    </div>
+  </div>
+  <div id="pgrid"><div class="spin-wrap"><div class="spin"></div><p style="font-size:13px;color:#aaa">Carregando...</p></div></div>
+</div>
+
+<!-- PERFIL -->
+<div class="page" id="page-perfil">
+  <div class="pw" id="pcon">
+    <div class="sel-prompt"><span class="ico">📋</span>Vá ao <strong>Painel</strong>, selecione um colaborador e clique em <strong>"Ver perfil"</strong>.</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO — Substitua pela sua chave após criar no jsonbin.io
+// ============================================================
+var BIN_ID   = '';  // ex: '6634abc123def456'
+var MASTER_KEY = ''; // ex: '$2a$10$xxxx'
+var SENHA_PAINEL = 'macris2025'; // senha para acessar o painel
+// ============================================================
+
+var cur=0,tot=5,ans={},colabs=[];
+var LKEY='macris_colabs_v4';
+
+function loadLocal(){try{var s=localStorage.getItem(LKEY);if(s)colabs=JSON.parse(s);}catch(e){colabs=[];}}
+function saveLocal(){try{localStorage.setItem(LKEY,JSON.stringify(colabs));}catch(e){}}
+
+loadLocal();
+
+async function fetchCloud(){
+  if(!BIN_ID||!MASTER_KEY)return false;
+  try{
+    var r=await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID+'/latest',{headers:{'X-Master-Key':MASTER_KEY}});
+    if(!r.ok)return false;
+    var d=await r.json();
+    if(d.record&&d.record.colabs){colabs=d.record.colabs;saveLocal();return true;}
+  }catch(e){}
+  return false;
+}
+
+async function pushCloud(){
+  if(!BIN_ID||!MASTER_KEY)return;
+  try{
+    await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':MASTER_KEY},
+      body:JSON.stringify({colabs:colabs})
+    });
+  }catch(e){}
+}
+
+function showPage(p){
+  if(p==='painel'){
+    document.getElementById('modalSenha').classList.add('show');
+    document.getElementById('senhaInput').value='';
+    document.getElementById('senhaErro').style.display='none';
+    window._pendingPage='painel';
+    return;
+  }
+  _goPage(p);
+}
+
+function _goPage(p){
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  var m={form:0,painel:1,perfil:2};
+  document.querySelectorAll('.nav-tab')[m[p]].classList.add('active');
+  if(p==='painel')loadPainel();
+}
+
+function checkSenha(){
+  var v=document.getElementById('senhaInput').value;
+  if(v===SENHA_PAINEL){
+    document.getElementById('modalSenha').classList.remove('show');
+    _goPage(window._pendingPage||'painel');
+  } else {
+    document.getElementById('senhaErro').style.display='block';
+  }
+}
+
+function sel(el,k,v){
+  el.closest('.opts').querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
+  el.classList.add('selected');ans[k]=v;
+}
+
+function updProg(){
+  document.getElementById('pb').style.width=((cur/(tot-1))*100)+'%';
+  document.getElementById('scnt').textContent='Etapa '+(cur+1)+' de '+tot;
+  document.getElementById('bbk').style.display=cur>0?'block':'none';
+  document.getElementById('bnx').textContent=cur===tot-1?'Finalizar ✓':'Continuar →';
+}
+
+function next(){
+  if(cur===0){
+    var n=document.getElementById('fn').value.trim();
+    var c=document.getElementById('fc').value;
+    var l=document.getElementById('fl').value;
+    if(!n||!c||!l){alert('Por favor, preencha todos os campos.');return;}
+  }
+  if(cur<tot-1){
+    document.getElementById('s'+cur).classList.remove('active');
+    cur++;document.getElementById('s'+cur).classList.add('active');
+    updProg();window.scrollTo(0,0);
+  } else {submit();}
+}
+
+function prev(){
+  if(cur>0){
+    document.getElementById('s'+cur).classList.remove('active');
+    cur--;document.getElementById('s'+cur).classList.add('active');
+    updProg();window.scrollTo(0,0);
+  }
+}
+
+function cB(){
+  var c={A:0,B:0,C:0,D:0};
+  ['b1','b2','b3','b4'].forEach(function(k){if(ans[k])c[ans[k]]++;});
+  var m=Math.max(c.A,c.B,c.C,c.D);
+  var w=Object.keys(c).find(function(k){return c[k]===m;})||'B';
+  var mp={A:'🦈 Tubarão',B:'🐱 Gato',C:'🦅 Águia',D:'🐺 Lobo'};
+  var dp={A:'Executor — foco em resultados e ação',B:'Comunicador — harmonia e trabalho em equipe',C:'Idealizador — criativo e visionário',D:'Organizador — metódico e estrategista'};
+  return{perfil:mp[w],desc:dp[w]};
+}
+function cD(){
+  var c={D:0,I:0,S:0,C:0};
+  ['d1','d2','d3','d4'].forEach(function(k){if(ans[k])c[ans[k]]++;});
+  var m=Math.max(c.D,c.I,c.S,c.C);
+  var w=Object.keys(c).find(function(k){return c[k]===m;})||'I';
+  var mp={D:'Dominância',I:'Influência',S:'Estabilidade',C:'Conformidade'};
+  var dp={D:'Direto, decidido e orientado a resultados',I:'Entusiasta, comunicativo e persuasivo',S:'Paciente, leal e colaborativo',C:'Analítico, preciso e organizado'};
+  return{perfil:mp[w],desc:dp[w]};
+}
+function cT(){
+  var c={COL:0,SAN:0,MEL:0,FLE:0};
+  ['t1','t2','t3','t4'].forEach(function(k){if(ans[k])c[ans[k]]++;});
+  var m=Math.max(c.COL,c.SAN,c.MEL,c.FLE);
+  var w=Object.keys(c).find(function(k){return c[k]===m;})||'SAN';
+  var mp={COL:'🔥 Colérico',SAN:'☀️ Sanguíneo',MEL:'🌙 Melancólico',FLE:'🌊 Fleumático'};
+  var dp={COL:'Determinado, enérgico, liderança forte',SAN:'Alegre, sociável e otimista',MEL:'Sensível, perfeccionista e analítico',FLE:'Calmo, equilibrado e estável'};
+  return{perfil:mp[w],desc:dp[w]};
+}
+function cA(){
+  var c={V:0,A:0,L:0,C:0};
+  ['a1','a2','a3','a4'].forEach(function(k){if(ans[k])c[ans[k]]++;});
+  var m=Math.max(c.V,c.A,c.L,c.C);
+  var w=Object.keys(c).find(function(k){return c[k]===m;})||'C';
+  var mp={V:'👁️ Visual',A:'👂 Auditivo',L:'📖 Leitura',C:'🤝 Cinestésico'};
+  var dp={V:'Aprende melhor com imagens e vídeos',A:'Aprende melhor ouvindo e dialogando',L:'Aprende melhor lendo e anotando',C:'Aprende melhor praticando'};
+  var tp={V:'Apresentações visuais e vídeos',A:'Explicações ao vivo e diálogos',L:'Manuais e materiais escritos',C:'Simulações e treinamentos práticos'};
+  return{perfil:mp[w],desc:dp[w],trein:tp[w]};
+}
+
+async function submit(){
+  var btn=document.getElementById('bnx');
+  btn.textContent='Salvando...';btn.disabled=true;
+  var colab={id:Date.now(),nome:document.getElementById('fn').value.trim(),cargo:document.getElementById('fc').value,loja:document.getElementById('fl').value,data:new Date().toLocaleDateString('pt-BR'),bicho:cB(),disc:cD(),temp:cT(),apr:cA()};
+  colabs.unshift(colab);
+  saveLocal();
+  await pushCloud();
+  document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('ftr').style.display='none';
+  document.getElementById('suc-t').textContent=colab.nome+', tudo certo!';
+  document.getElementById('suc').classList.add('show');
+  window.scrollTo(0,0);
+}
+
+function resetForm(){
+  cur=0;ans={};
+  document.getElementById('fn').value='';
+  document.getElementById('fc').value='';
+  document.getElementById('fl').value='';
+  document.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
+  document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('s0').classList.add('active');
+  document.getElementById('ftr').style.display='flex';
+  document.getElementById('bnx').disabled=false;
+  document.getElementById('suc').classList.remove('show');
+  updProg();window.scrollTo(0,0);
+}
+
+function ini(n){return n.split(' ').slice(0,2).map(function(x){return x[0];}).join('').toUpperCase();}
+
+function showToast(m){
+  var t=document.getElementById('toast');
+  t.textContent=m;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2500);
+}
+
+async function loadPainel(){
+  var g=document.getElementById('pgrid');
+  g.innerHTML='<div class="spin-wrap"><div class="spin"></div><p style="font-size:13px;color:#aaa">Buscando dados em tempo real...</p></div>';
+  await fetchCloud();
+  renderPainel();
+}
+
+function renderPainel(){
+  var g=document.getElementById('pgrid');
+  document.getElementById('pcnt').textContent=colabs.length+' colaborador'+(colabs.length!==1?'es':'');
+  if(colabs.length===0){
+    g.innerHTML='<div class="empty"><div class="ico">👥</div><p>Nenhum colaborador cadastrado ainda.<br>Compartilhe o link <strong>iasmimchilli-star.github.io/macris-equipes</strong><br>para a equipe preencher.</p></div>';
+    return;
+  }
+  g.innerHTML=colabs.map(function(c,i){
+    return '<div class="ccard">'+
+      '<div class="cchead" onclick="tog('+i+')">'+
+        '<div class="av">'+ini(c.nome)+'</div>'+
+        '<div class="ci"><div class="cn">'+c.nome+'</div><div class="cr">'+c.cargo+' · '+c.loja+' · '+c.data+'</div></div>'+
+        '<div class="bgs"><span class="bg bg-p">'+c.bicho.perfil.split(' ')[1]+'</span><span class="bg bg-t">'+c.disc.perfil+'</span><span class="bg bg-a">'+c.temp.perfil.split(' ')[1]+'</span></div>'+
+        '<span class="chv" id="chv-'+i+'">▼</span>'+
+      '</div>'+
+      '<div class="cdet" id="det-'+i+'">'+
+        '<div class="dgrid">'+
+          '<div class="dbox"><div class="dlbl">Bicho</div><div class="dval">'+c.bicho.perfil+'</div><div class="dsub">'+c.bicho.desc+'</div></div>'+
+          '<div class="dbox"><div class="dlbl">DISC</div><div class="dval">'+c.disc.perfil+'</div><div class="dsub">'+c.disc.desc+'</div></div>'+
+          '<div class="dbox"><div class="dlbl">Temperamento</div><div class="dval">'+c.temp.perfil+'</div><div class="dsub">'+c.temp.desc+'</div></div>'+
+          '<div class="dbox"><div class="dlbl">Aprendizado</div><div class="dval">'+c.apr.perfil+'</div><div class="dsub">'+c.apr.desc+'</div></div>'+
+        '</div>'+
+        '<div class="dacts">'+
+          '<button class="abtn abtn-p" onclick="verPerfil('+i+')">📋 Ver perfil completo</button>'+
+          '<button class="abtn abtn-d" onclick="del('+i+')">🗑️ Excluir</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function tog(i){
+  document.getElementById('det-'+i).classList.toggle('open');
+  document.getElementById('chv-'+i).classList.toggle('open');
+}
+
+async function del(i){
+  if(confirm('Excluir o perfil de '+colabs[i].nome+'?')){
+    colabs.splice(i,1);saveLocal();await pushCloud();renderPainel();
+  }
+}
+
+function verPerfil(i){
+  var c=colabs[i];
+  document.getElementById('pcon').innerHTML=
+    '<div class="pcard">'+
+      '<div class="phero"><div class="pav">'+ini(c.nome)+'</div><h2>'+c.nome+'</h2><div class="sub">'+c.cargo+' · '+c.loja+'</div><div class="dt">Mapeamento em '+c.data+'</div>'+
+      '<div class="pbgs"><span class="bg bg-p">'+c.bicho.perfil+'</span><span class="bg bg-t">'+c.disc.perfil+'</span><span class="bg bg-a">'+c.temp.perfil+'</span><span class="bg bg-b">'+c.apr.perfil+'</span></div></div>'+
+      '<div class="psec"><div class="stag">🐾 Teste dos Bichos</div><div class="pgrid"><div class="pbox"><div class="pbl">Perfil</div><div class="pbv">'+c.bicho.perfil+'</div><div class="pbd">'+c.bicho.desc+'</div></div><div class="pbox"><div class="pbl">Como age</div><div class="pbv">'+c.bicho.desc.split(' — ')[0]+'</div><div class="pbd">Característica central do perfil</div></div></div></div>'+
+      '<div class="psec"><div class="stag">📊 DISC</div><div class="pgrid"><div class="pbox"><div class="pbl">Dimensão</div><div class="pbv">'+c.disc.perfil+'</div><div class="pbd">'+c.disc.desc+'</div></div><div class="pbox"><div class="pbl">Estilo</div><div class="pbv">'+c.disc.desc.split(',')[0]+'</div><div class="pbd">Comportamento no dia a dia</div></div></div></div>'+
+      '<div class="psec"><div class="stag">🌡️ Temperamento</div><div class="pgrid"><div class="pbox"><div class="pbl">Tipo</div><div class="pbv">'+c.temp.perfil+'</div><div class="pbd">'+c.temp.desc+'</div></div><div class="pbox"><div class="pbl">Reação natural</div><div class="pbv">'+c.temp.desc.split(',')[0]+'</div><div class="pbd">Como reage a situações e pressões</div></div></div></div>'+
+      '<div class="psec"><div class="stag">📚 Aprendizado</div><div class="pgrid"><div class="pbox"><div class="pbl">Estilo</div><div class="pbv">'+c.apr.perfil+'</div><div class="pbd">'+c.apr.desc+'</div></div><div class="pbox"><div class="pbl">Treinamento ideal</div><div class="pbv">'+c.apr.trein+'</div><div class="pbd">Formato de melhor absorção</div></div></div></div>'+
+      '<div class="pfooter"><button class="pbk" onclick="_goPage(\'painel\')">← Voltar</button><button class="ppr" onclick="window.print()">🖨️ Imprimir / PDF</button></div>'+
+    '</div>';
+  _goPage('perfil');
+}
+</script>
+</body>
+</html>
